@@ -142,7 +142,7 @@
       this[globalName] = mainExports;
     }
   }
-})({"eTlUT":[function(require,module,exports) {
+})({"i8rNx":[function(require,module,exports) {
 var global = arguments[3];
 var HMR_HOST = null;
 var HMR_PORT = null;
@@ -584,185 +584,97 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"54QS3":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-var _iconsSvg = require("../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-document.addEventListener("DOMContentLoaded", app);
+var _model = require("./model");
+var _bookmarksView = require("./views/bookmarksView");
+var _elementsView = require("./views/elementsView");
+var _paginationView = require("./views/paginationView");
+var _recipeView = require("./views/recipeView");
+var _resultsView = require("./views/resultsView");
+var _state = require("./state");
+addEventListener("DOMContentLoaded", app);
 function app() {
-    const recipeContainer = document.querySelector(".recipe");
-    const inputData = document.querySelector(".search__field");
-    const searchBtn = document.querySelector(".search__btn");
-    const results = document.querySelector(".results");
-    const API = "5bcaa7a8-fde0-4c7f-9a2b-64a03594b754";
-    let resultArr;
-    function insertList(arr, pastHere, id) {
-        arr.forEach((el)=>{
-            pastHere.insertAdjacentHTML("afterbegin", `<li class="preview">
-            <a class="preview__link ${id === el.id ? "preview__link--active" : ""}" href="#${el.id}">
-              <figure class="preview__fig">
-                <img src="${el.image_url}" alt="Test" />
-              </figure>
-              <div class="preview__data">
-                <h4 class="preview__title">${el.title}</h4>
-                <p class="preview__publisher">${el.publisher}</p>
-                
-              </div>
-            </a>
-          </li>`, pastHere);
-        });
-    }
-    const requestFromAPI = async function(name, api) {
-        try {
-            renderSpinner(recipeContainer);
-            const asnwer = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes?search=${name}&key=${api}`);
-            return asnwer.json();
-        } catch  {} finally{
-            removeSpinner();
-        }
-    };
-    function removeSpinner() {
-        const spinner = document.querySelector(".spinner");
-        if (spinner) spinner.remove();
-    }
-    searchBtn.addEventListener("click", function(e) {
-        e.preventDefault();
-        const inputValue = inputData.value;
-        requestFromAPI(inputValue, API).then((data)=>{
-            resultArr = data.data.recipes;
-            insertList(data.data.recipes, results);
-        }).catch((err)=>console.log(err));
-    });
-    function renderSpinner(container) {
-        const html = `
-    <div class="spinner">
-    <svg>
-    <use href="${(0, _iconsSvgDefault.default)}.svg#icon-loader"></use>
-    </svg>
-    </div>`;
-        container.innerHTML = "";
-        container.insertAdjacentHTML("afterbegin", html);
-        const spinner = document.querySelector(".spinner");
-    }
-    async function getRecipeFromApi(id) {
-        try {
-            const request = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}?key=${API}`);
-            return request.json();
-        } catch (err) {
-            console.error(err);
-        }
-    }
-    function renderRecipe(obj, wherePut) {
-        const html = `<figure class="recipe__fig">
-          <img src="${obj.data.recipe.image_url}" alt="Tomato" class="recipe__img" />
-          <h1 class="recipe__title">
-            <span>${obj.data.recipe.title}</span>
-          </h1>
-        </figure>
-
-        <div class="recipe__details">
-          <div class="recipe__info">
-            <svg class="recipe__info-icon">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-clock"></use>
-            </svg>
-            <span class="recipe__info-data recipe__info-data--minutes">${obj.data.recipe.cooking_time}</span>
-            <span class="recipe__info-text">minutes</span>
-          </div>
-          <div class="recipe__info">
-            <svg class="recipe__info-icon">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-users"></use>
-            </svg>
-            <span class="recipe__info-data recipe__info-data--people">${obj.data.recipe.servings}</span>
-            <span class="recipe__info-text">servings</span>
-
-            <div class="recipe__info-buttons">
-              <button class="btn--tiny btn--increase-servings">
-                <svg>
-                  <use href="${(0, _iconsSvgDefault.default)}#icon-minus-circle"></use>
-                </svg>
-              </button>
-              <button class="btn--tiny btn--increase-servings">
-                <svg>
-                  <use href="${(0, _iconsSvgDefault.default)}#icon-plus-circle"></use>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="recipe__user-generated">
-            <svg>
-              <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
-            </svg>
-          </div>
-          <button class="btn--round">
-            <svg class="">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-bookmark-fill"></use>
-            </svg>
-          </button>
-        </div>
-
-        <div class="recipe__ingredients">
-          <h2 class="heading--2">Recipe ingredients</h2>
-          <ul class="recipe__ingredient-list">
-          </ul>
-        </div>
-        <div class="recipe__directions">
-          <h2 class="heading--2">How to cook it</h2>
-          <p class="recipe__directions-text">
-            This recipe was carefully designed and tested by
-            <span class="recipe__publisher">The Pioneer Woman</span>. Please check out
-            directions at their website.
-          </p>
-          <a
-            class="btn--small recipe__btn"
-            href="http://thepioneerwoman.com/cooking/pasta-with-tomato-cream-sauce/"
-            target="_blank"
-          >
-            <span>Directions</span>
-            <svg class="search__icon">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-arrow-right"></use>
-            </svg>
-          </a>
-        </div>`;
-        wherePut.insertAdjacentHTML("afterbegin", html);
-        const ingridientsList = document.querySelector(".recipe__ingredient-list");
-        obj.data.recipe.ingredients.forEach((el)=>{
-            const html = `<li class="recipe__ingredient">
-              <svg class="recipe__icon">
-                <use href="${(0, _iconsSvgDefault.default)}#icon-check"></use>
-              </svg>
-              <div class="recipe__quantity">${el.quantity === null ? "" : el.quantity}</div>
-              <div class="recipe__description">
-                <span class="recipe__unit">${el.unit === null ? "" : el.unit}</span>
-                ${el.description}
-              </div>
-            </li>`;
-            ingridientsList.insertAdjacentHTML("afterbegin", html);
-        });
-    }
-    async function showRecipe() {
-        try {
-            let id = window.location.hash;
-            console.log(id);
-            console.log(resultArr);
-            resultArr.forEach((e)=>{
-                if (id === `#${e.id}`) getRecipeFromApi(e.id).then((data)=>{
-                    console.log(data);
-                    results.innerHTML = "";
-                    insertList(resultArr, results, e.id);
-                    recipeContainer.innerHTML = "";
-                    renderRecipe(data, recipeContainer);
-                });
-            });
-        } catch (err) {
-            console.error(err);
-        } finally{
-            renderSpinner(recipeContainer);
-        }
-    }
-    window.addEventListener("hashchange", showRecipe);
+    // console.log(state.allInitialElements);
+    // Handle results from input
+    _resultsView.renderListInitial();
+    _resultsView.addHundlerForSubmit(_model.renderListFromAPI());
+    //Render initial
+    _recipeView.addRecipe();
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"1OcIO","../img/icons.svg":"2E0oq"}],"1OcIO":[function(require,module,exports) {
+},{"./model":"9VSim","./views/bookmarksView":"bXvzQ","./views/elementsView":"dztAY","./views/paginationView":"8PiN3","./views/recipeView":"1I2yA","./views/resultsView":"2Gi2E","./state":"jCZov"}],"9VSim":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "renderListFromAPI", ()=>renderListFromAPI);
+parcelHelpers.export(exports, "renderRecipesFromAPI", ()=>renderRecipesFromAPI);
+var _state = require("./state");
+async function renderListFromAPI() {
+    try {
+        const inputValue = _state.inputData.value;
+        const url = `https://forkify-api.herokuapp.com/api/v2/recipes?search=${inputValue}&key=${_state.API_key}`;
+        const request = (await fetch(url)).json();
+        return request;
+    } catch (err) {
+        console.error(err);
+    } finally{}
+}
+async function renderRecipesFromAPI(hash) {
+    const request = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${hash}?key=${_state.API_key}`);
+    return request.json();
+}
+
+},{"./state":"jCZov","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"jCZov":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "API_key", ()=>API_key);
+parcelHelpers.export(exports, "inputData", ()=>inputData);
+parcelHelpers.export(exports, "searchBtn", ()=>searchBtn);
+parcelHelpers.export(exports, "results", ()=>results);
+parcelHelpers.export(exports, "recipeContainer", ()=>recipeContainer);
+parcelHelpers.export(exports, "recipeBtn", ()=>recipeBtn);
+parcelHelpers.export(exports, "addRecipeWindow", ()=>addRecipeWindow);
+parcelHelpers.export(exports, "btnCloseModal", ()=>btnCloseModal);
+parcelHelpers.export(exports, "uploadBtn", ()=>uploadBtn);
+parcelHelpers.export(exports, "formTitle", ()=>formTitle);
+parcelHelpers.export(exports, "formSourceUrl", ()=>formSourceUrl);
+parcelHelpers.export(exports, "formImage", ()=>formImage);
+parcelHelpers.export(exports, "formPublisher", ()=>formPublisher);
+parcelHelpers.export(exports, "formCookingTime", ()=>formCookingTime);
+parcelHelpers.export(exports, "formServings", ()=>formServings);
+parcelHelpers.export(exports, "ingredient_1", ()=>ingredient_1);
+parcelHelpers.export(exports, "ingredient_2", ()=>ingredient_2);
+parcelHelpers.export(exports, "ingredient_3", ()=>ingredient_3);
+parcelHelpers.export(exports, "ingredient_4", ()=>ingredient_4);
+parcelHelpers.export(exports, "ingredient_5", ()=>ingredient_5);
+parcelHelpers.export(exports, "ingredient_6", ()=>ingredient_6);
+parcelHelpers.export(exports, "ownRecipesArr", ()=>ownRecipesArr);
+parcelHelpers.export(exports, "allInitialElements", ()=>allInitialElements);
+parcelHelpers.export(exports, "pages", ()=>pages);
+const API_key = "5bcaa7a8-fde0-4c7f-9a2b-64a03594b754";
+const inputData = document.querySelector(".search__field");
+const searchBtn = document.querySelector(".search__btn");
+const results = document.querySelector(".results");
+const recipeContainer = document.querySelector(".recipe");
+const recipeBtn = document.querySelector(".nav__btn--add-recipe");
+const addRecipeWindow = document.querySelector(".add-recipe-window");
+const btnCloseModal = document.querySelector(".btn--close-modal");
+const uploadBtn = document.querySelector(".upload__btn");
+const formTitle = document.querySelector("input[name='title']");
+const formSourceUrl = document.querySelector("input[name='sourceUrl']");
+const formImage = document.querySelector("input[name='image']");
+const formPublisher = document.querySelector("input[name='publisher']");
+const formCookingTime = document.querySelector("input[name='cookingTime']");
+const formServings = document.querySelector("input[name='servings']");
+const ingredient_1 = document.querySelector("input[name='ingredient-1']");
+const ingredient_2 = document.querySelector("input[name='ingredient-2']");
+const ingredient_3 = document.querySelector("input[name='ingredient-3']");
+const ingredient_4 = document.querySelector("input[name='ingredient-4']");
+const ingredient_5 = document.querySelector("input[name='ingredient-5']");
+const ingredient_6 = document.querySelector("input[name='ingredient-6']");
+const ownRecipesArr = [];
+let allInitialElements = [];
+const pages = document.querySelector(".pagination");
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"j7FRh":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -792,10 +704,27 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"2E0oq":[function(require,module,exports) {
-module.exports = require("f829ec8b33f915ea").getBundleURL("lHwkS") + "icons.8d0e18b8.svg" + "?" + Date.now();
+},{}],"bXvzQ":[function(require,module,exports) {
 
-},{"f829ec8b33f915ea":"kOuGC"}],"kOuGC":[function(require,module,exports) {
+},{}],"dztAY":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "renderSpinner", ()=>renderSpinner);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+function renderSpinner(place) {
+    const html = `<div class="spinner">
+          <svg>
+            <use href="src/img/icons.svg#icon-loader"></use>
+          </svg>
+        </div>`;
+    place.insertAdjacentHTML("afterbegin", html);
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","url:../../img/icons.svg":"70BCe"}],"70BCe":[function(require,module,exports) {
+module.exports = require("fcdcc0225db68537").getBundleURL("lHwkS") + "icons.100d5477.svg" + "?" + Date.now();
+
+},{"fcdcc0225db68537":"hPpBg"}],"hPpBg":[function(require,module,exports) {
 "use strict";
 var bundleURL = {};
 function getBundleURLCached(id) {
@@ -830,5 +759,144 @@ exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
 
-},{}]},["eTlUT","54QS3"], "54QS3", "parcelRequire3a11")
+},{}],"8PiN3":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "renderPage", ()=>renderPage);
+var _state = require("../state");
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+function renderPage(start, end, page, allAmount) {
+    console.log(allAmount);
+    const finalPage = Math.round(allAmount / 10);
+    console.log(finalPage);
+    const html = `<button class="btn--inline pagination__btn--prev ${page === 1 ? "hidden" : ""}">
+            <svg class="search__icon">
+              <use href="${(0, _iconsSvgDefault.default)}#icon-arrow-left"></use>
+            </svg>
+            <span>Page ${page - 1}</span>
+          </button>
+          <button class="btn--inline pagination__btn--next ${page >= finalPage ? "hidden" : ""}">
+            <span>Page ${page + 1}</span>
+            <svg class="search__icon">
+              <use href="${(0, _iconsSvgDefault.default)}#icon-arrow-right"></use>
+            </svg>
+          </button>`;
+    _state.pages.insertAdjacentHTML("afterbegin", html);
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../state":"jCZov","url:../../img/icons.svg":"70BCe"}],"1I2yA":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// import * as results from './resultsView';
+parcelHelpers.export(exports, "addRecipe", ()=>addRecipe);
+var _state = require("../state");
+function addRecipe() {
+    _state.recipeBtn.addEventListener("click", function() {
+        _state.addRecipeWindow.classList.remove("hidden");
+    });
+    _state.btnCloseModal.addEventListener("click", function() {
+        _state.addRecipeWindow.classList.add("hidden");
+    });
+    _state.uploadBtn.addEventListener("click", function(e) {
+        const response = JSON.parse(localStorage.getItem("ownRecipes")) ? JSON.parse(localStorage.getItem("ownRecipes")) : [];
+        let counter = response.length === 0 ? 1 : response.length + 1;
+        e.preventDefault();
+        const formInputs = {
+            id: counter,
+            title: _state.formTitle.value,
+            image_url: _state.formImage.value,
+            publisher: _state.formPublisher.value,
+            prepTime: _state.formCookingTime.value,
+            servings: _state.formServings.value,
+            //ingridients
+            ingridient1: _state.ingredient_1.value,
+            ingridient2: _state.ingredient_2.value,
+            ingridient3: _state.ingredient_3.value,
+            ingridient4: _state.ingredient_4.value,
+            ingridient5: _state.ingredient_5.value,
+            ingridient6: _state.ingredient_6.value
+        };
+        response.push(formInputs);
+        localStorage.setItem("ownRecipes", JSON.stringify(response));
+        _state.addRecipeWindow.classList.add("hidden");
+        window.location.reload();
+    });
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../state":"jCZov"}],"2Gi2E":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "renderListInitial", ()=>renderListInitial);
+parcelHelpers.export(exports, "renderList", ()=>renderList);
+//Click handle
+parcelHelpers.export(exports, "addHundlerForSubmit", ()=>addHundlerForSubmit);
+var _state = require("../state");
+var _model = require("../model");
+var _paginationView = require("./paginationView");
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+var _elementsView = require("./elementsView");
+let page;
+async function renderListInitial() {
+    const response = JSON.parse(localStorage.getItem("ownRecipes")) ? JSON.parse(localStorage.getItem("ownRecipes")) : [];
+    console.log(response);
+    renderList(response, 1);
+}
+function renderList(arr, my) {
+    // renderListInitial();
+    _state.results.innerHTML = "";
+    arr.forEach((el)=>{
+        const html = `<li class="preview">
+              <a class="preview__link" href="#${el.id}">
+                <figure class="preview__fig">
+                  <img src="${el.image_url}" alt="${el.title}" />
+                </figure>
+                <div class="preview__data">
+                  <h4 class="preview__title">${el.title}</h4>
+                  <p class="preview__publisher">${el.publisher}</p>
+                </div>
+                ${my === 1 ? `<div class="preview__user-generated">
+                    <svg>
+                      <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
+                    </svg>
+                  </div>` : ""}
+              </a>
+              
+            </li>`;
+        _state.results.insertAdjacentHTML("afterbegin", html);
+    });
+}
+//Get list from api local storage
+function getListFromLocalStorage() {
+    _model.renderListFromAPI().then((res)=>{
+        let start, end;
+        start = JSON.parse(localStorage.getItem("ownRecipes")) ? Number(page - 1 + "1") + JSON.parse(localStorage.getItem("ownRecipes")).length : Number(page - 1 + "1");
+        end = Number(page - 1 + "9");
+        renderList(res.data.recipes.slice(start, end + 2));
+        // Pagination
+        _paginationView.renderPage(start, end, page, JSON.parse(localStorage.getItem("ownRecipes")).length + res.data.recipes.length);
+        document.querySelector(".pagination__btn--prev").addEventListener("click", function() {
+            _state.pages.innerHTML = "";
+            page--;
+            getListFromLocalStorage();
+        });
+        document.querySelector(".pagination__btn--next").addEventListener("click", function() {
+            _state.pages.innerHTML = "";
+            page++;
+            getListFromLocalStorage();
+        });
+    });
+}
+function addHundlerForSubmit() {
+    _state.searchBtn.addEventListener("click", function(e) {
+        page = 1;
+        _state.pages.innerHTML = "";
+        e.preventDefault();
+        getListFromLocalStorage();
+        renderListInitial();
+    });
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../state":"jCZov","../model":"9VSim","url:../../img/icons.svg":"70BCe","./paginationView":"8PiN3","./elementsView":"dztAY"}]},["i8rNx","54QS3"], "54QS3", "parcelRequire3a11")
 
