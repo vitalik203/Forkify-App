@@ -11,7 +11,6 @@ addEventListener('DOMContentLoaded', app);
 function app() {
   // console.log(state.allInitialElements);
   // Handle results from input
-  results.renderListInitial();
   results.addHundlerForSubmit(model.renderListFromAPI());
   //Render initial
 

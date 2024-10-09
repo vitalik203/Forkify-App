@@ -4,6 +4,7 @@ export const API_key = '5bcaa7a8-fde0-4c7f-9a2b-64a03594b754';
 export const inputData = document.querySelector('.search__field');
 export const searchBtn = document.querySelector('.search__btn');
 export const results = document.querySelector('.results');
+export const itemAtList = 10;
 
 //Recipe
 export const recipeContainer = document.querySelector('.recipe');

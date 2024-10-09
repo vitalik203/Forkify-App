@@ -142,7 +142,7 @@
       this[globalName] = mainExports;
     }
   }
-})({"i8rNx":[function(require,module,exports) {
+})({"5dEBQ":[function(require,module,exports) {
 var global = arguments[3];
 var HMR_HOST = null;
 var HMR_PORT = null;
@@ -595,7 +595,6 @@ addEventListener("DOMContentLoaded", app);
 function app() {
     // console.log(state.allInitialElements);
     // Handle results from input
-    _resultsView.renderListInitial();
     _resultsView.addHundlerForSubmit(_model.renderListFromAPI());
     //Render initial
     _recipeView.addRecipe();
@@ -629,6 +628,7 @@ parcelHelpers.export(exports, "API_key", ()=>API_key);
 parcelHelpers.export(exports, "inputData", ()=>inputData);
 parcelHelpers.export(exports, "searchBtn", ()=>searchBtn);
 parcelHelpers.export(exports, "results", ()=>results);
+parcelHelpers.export(exports, "itemAtList", ()=>itemAtList);
 parcelHelpers.export(exports, "recipeContainer", ()=>recipeContainer);
 parcelHelpers.export(exports, "recipeBtn", ()=>recipeBtn);
 parcelHelpers.export(exports, "addRecipeWindow", ()=>addRecipeWindow);
@@ -653,6 +653,7 @@ const API_key = "5bcaa7a8-fde0-4c7f-9a2b-64a03594b754";
 const inputData = document.querySelector(".search__field");
 const searchBtn = document.querySelector(".search__btn");
 const results = document.querySelector(".results");
+const itemAtList = 10;
 const recipeContainer = document.querySelector(".recipe");
 const recipeBtn = document.querySelector(".nav__btn--add-recipe");
 const addRecipeWindow = document.querySelector(".add-recipe-window");
@@ -827,7 +828,7 @@ function addRecipe() {
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../state":"jCZov"}],"2Gi2E":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "renderListInitial", ()=>renderListInitial);
+parcelHelpers.export(exports, "getListInitial", ()=>getListInitial);
 parcelHelpers.export(exports, "renderList", ()=>renderList);
 //Click handle
 parcelHelpers.export(exports, "addHundlerForSubmit", ()=>addHundlerForSubmit);
@@ -837,55 +838,63 @@ var _paginationView = require("./paginationView");
 var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _elementsView = require("./elementsView");
-let page;
-async function renderListInitial() {
-    const response = JSON.parse(localStorage.getItem("ownRecipes")) ? JSON.parse(localStorage.getItem("ownRecipes")) : [];
-    console.log(response);
-    renderList(response, 1);
+let resArr = [];
+let localStorageData;
+let page = 2;
+function getListInitial() {
+    return localStorageData = JSON.parse(localStorage.getItem("ownRecipes")) ? JSON.parse(localStorage.getItem("ownRecipes")) : [];
 }
-function renderList(arr, my) {
-    // renderListInitial();
+function renderList(arr, page) {
     _state.results.innerHTML = "";
-    arr.forEach((el)=>{
-        const html = `<li class="preview">
-              <a class="preview__link" href="#${el.id}">
-                <figure class="preview__fig">
-                  <img src="${el.image_url}" alt="${el.title}" />
-                </figure>
-                <div class="preview__data">
-                  <h4 class="preview__title">${el.title}</h4>
-                  <p class="preview__publisher">${el.publisher}</p>
-                </div>
-                ${my === 1 ? `<div class="preview__user-generated">
-                    <svg>
-                      <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
-                    </svg>
-                  </div>` : ""}
-              </a>
-              
-            </li>`;
-        _state.results.insertAdjacentHTML("afterbegin", html);
+    let start, end;
+    start = (page - 1) * _state.itemAtList;
+    end = page * _state.itemAtList - 1;
+    console.log(start, end);
+    arr.forEach((el, i)=>{
+        if (i > start - 1 && i <= end) {
+            const html = `<li class="preview">
+      <a class="preview__link" href="#${el.id}">
+        <figure class="preview__fig">
+          <img src="${el.image_url}" alt="${el.title}" />
+        </figure>
+        <div class="preview__data">
+          <h4 class="preview__title">${el.title}</h4>
+          <p class="preview__publisher">${el.publisher}</p>
+        </div>
+      </a>
+    </li>`;
+            _state.results.insertAdjacentHTML("afterbegin", html);
+        }
     });
 }
 //Get list from api local storage
 function getListFromLocalStorage() {
     _model.renderListFromAPI().then((res)=>{
-        let start, end;
-        start = JSON.parse(localStorage.getItem("ownRecipes")) ? Number(page - 1 + "1") + JSON.parse(localStorage.getItem("ownRecipes")).length : Number(page - 1 + "1");
-        end = Number(page - 1 + "9");
-        renderList(res.data.recipes.slice(start, end + 2));
-        // Pagination
-        _paginationView.renderPage(start, end, page, JSON.parse(localStorage.getItem("ownRecipes")).length + res.data.recipes.length);
-        document.querySelector(".pagination__btn--prev").addEventListener("click", function() {
-            _state.pages.innerHTML = "";
-            page--;
-            getListFromLocalStorage();
+        resArr = [];
+        res.data.recipes.forEach((el)=>{
+            resArr.push(el);
         });
-        document.querySelector(".pagination__btn--next").addEventListener("click", function() {
-            _state.pages.innerHTML = "";
-            page++;
-            getListFromLocalStorage();
+        getListInitial().forEach((el)=>{
+            resArr.unshift(el);
         });
+        console.log(resArr);
+        renderList(resArr, page);
+    // // Pagination
+    // pagination.renderPage(start, end, page, resArr.length);
+    // document
+    //   .querySelector('.pagination__btn--prev')
+    //   .addEventListener('click', function () {
+    //     state.pages.innerHTML = '';
+    //     page--;
+    //     getListFromLocalStorage();
+    //   });
+    // document
+    //   .querySelector('.pagination__btn--next')
+    //   .addEventListener('click', function () {
+    //     state.pages.innerHTML = '';
+    //     page++;
+    //     getListFromLocalStorage();
+    //   });
     });
 }
 function addHundlerForSubmit() {
@@ -894,9 +903,8 @@ function addHundlerForSubmit() {
         _state.pages.innerHTML = "";
         e.preventDefault();
         getListFromLocalStorage();
-        renderListInitial();
     });
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../state":"jCZov","../model":"9VSim","url:../../img/icons.svg":"70BCe","./paginationView":"8PiN3","./elementsView":"dztAY"}]},["i8rNx","54QS3"], "54QS3", "parcelRequire3a11")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../state":"jCZov","../model":"9VSim","url:../../img/icons.svg":"70BCe","./paginationView":"8PiN3","./elementsView":"dztAY"}]},["5dEBQ","54QS3"], "54QS3", "parcelRequire3a11")
 
